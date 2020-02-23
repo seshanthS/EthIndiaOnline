@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <h1>Test Page</h1>
+        <script>
+            chrome.storage.local.get(['targetEmail'],(result)=>{
+                console.log(result)
+            })
+        </script>
+    </body>
+</html>

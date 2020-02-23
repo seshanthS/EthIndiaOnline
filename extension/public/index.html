@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <!-- <script src="./torus.js"></script> -->
+    </head>
+<body>
+<h1>TEST</h1>
+        <!-- <script src="./bg.js"></script> -->
+
+<script>
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        let currentTabId = tabs[0].url
+        chrome.storage.local.set({targetEmail:"darklord@test.com"})
+        chrome.tabs.create({url : "./test.html"})
+    })
+</script>
+
+</body>
+
+</html>
+
