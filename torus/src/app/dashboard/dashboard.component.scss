@@ -1,0 +1,78 @@
+
+  .welcome_title{
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 10px;
+    background: #ffffffa0;
+    margin: auto;
+    padding: 10px;
+    border-radius: 14px;
+  }
+  
+  .welcome_title span{
+      color: #006be8;
+  }
+  
+  .sub_welcome_title{
+    margin-top: 5px;
+    font-size: 1rem;
+  }
+  
+  .bg {
+    animation:slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
+    bottom:0;
+    left:-50%;
+    opacity:.5;
+    position:fixed;
+    right:-50%;
+    top:0;
+    z-index:-1;
+  }
+  
+  .bg2 {
+    animation-direction:alternate-reverse;
+    animation-duration:4s;
+  }
+  
+  .bg3 {
+    animation-duration:5s;
+  }
+  
+  
+  @keyframes slide {
+    0% {
+      transform:translateX(-25%);
+    }
+    100% {
+      transform:translateX(25%);
+    }
+  }
+
+    .qrclass{
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .card-img-top img{
+    text-align: center;
+  }
+
+
+  .bg-light{
+    background-color: #f8f9fa70 !important
+  }
+  .logout_btn{
+      cursor: pointer;
+  }
+
+  .nav_btn{
+    color: #000;
+    font-weight: bold;
+  }
+  .nav_btn:hover{
+    color: #222;
+
+  }
+
+  

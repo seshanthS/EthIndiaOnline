@@ -1,0 +1,61 @@
+<html>
+    <head>
+​
+<script src="https://app.tor.us/v1.0.0/embed.min.js"
+integrity="sha384-PAg4PvuFYzWY4THGynmPbfqGUb0gekmTzumGoo/yhESiri+rsds0O65AJW3eEHMc"
+crossorigin="anonymous"></script>
+​
+    </head>
+<body>
+<!-- <script src="https://app.tor.us/v0.2.12/embed.min.js"
+        integrity="sha384-lSiHcwUwWc+IymcuPXKXIJNrAdqA69cjnB7L8VWHlSI99WbNqzM3yLzQD/M9m2jq"
+        crossorigin="anonymous"></script> -->
+​
+​
+<script>
+    //if(torus.isLoggedIn == false)
+​
+    window.addEventListener('load', async function() {
+        console.log('All assets are loaded')
+        setTimeout(async()=>{
+            var torus = window.torus
+            await torus.cleanUp()
+            await torus.init({
+                enabledVerifiers :{
+                    google: true,
+                    facebook: false,
+                    reddit: false,
+                    twitch: false,
+                    discord: false
+                },
+                showTorusButton: false,
+                network: {
+                    host: "matic",
+                }
+​
+            })
+            await torus.login()
+            const web3 = new Web3(window.ethereum);
+            let userInfo = await torus.getUserInfo()
+            console.log(await torus.getPublicAddress({
+                verifier: userInfo.verifier,
+                verifierId: userInfo.verifierId
+            }))
+            let amountAsHex = web3.toHex(10)
+            let encoded = web3.fromAscii("\x19Ethereum Signed Message:\n" + amountAsHex.length + amountAsHex)
+            let accounts = web3.eth.accounts
+            console.log(accounts[0])
+            let signature = await web3.eth.sign(encoded, accounts[0])
+            console.log(signature)
+            let address = await web3.personal.ecRecover(signature)
+            console.log('address', address)
+        },2000)
+        //window.torus.showTorusButton( false )
+​
+    })
+​
+//window.ethereum.enable()
+</script>
+</body>
+​
+</html>

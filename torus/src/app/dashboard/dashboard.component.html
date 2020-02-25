@@ -1,0 +1,207 @@
+<div class="bg"></div>
+<!-- <div class="bg bg2"></div>
+<div class="bg bg3"></div> -->
+
+<div class="app">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div
+      class="collapse navbar-collapse navbar-static-top"
+      id="navbarSupportedContent"
+    >
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item ">
+          <a class="nav-link nav_btn" routerLink=""
+            >Home <span class="sr-only">(current)</span></a
+          >
+        </li>
+
+        <li class="nav-item ">
+          <a class="nav-link nav_btn" href="#">Link1</a>
+        </li>
+
+        <li class="nav-item ">
+          <a class="nav-link nav_btn" href="#">Link2</a>
+        </li>
+      </ul>
+
+      <div class="form-inline my-2 my-lg-0">
+        <!-- <label >Log out</label> -->
+        <a
+          href="#"
+          class="nav-link nav_btn"
+          data-toggle="modal"
+          data-target="#logoutModal"
+          >Logout</a
+        >
+      </div>
+    </div>
+  </nav>
+
+  <!-- Button trigger modal -->
+  <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#logoutModal">
+  Launch demo modal
+</button> -->
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="logoutModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="logoutModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure to logout..?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            No
+          </button>
+          <button type="button" (click)="logout()" class="btn btn-primary">
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="address">
+    <div>Account: {{ address }}</div>
+    <div>Balance: {{ balance }} ETH</div>
+    <button (click)="getUserInfo($event)">Get User Info</button>
+    <button (click)="createPaymentTx($event)">Create Payment Tx</button>
+    <button (click)="sendEth($event)">Send Eth</button>
+    <button (click)="logout($event)">Logout</button>
+    <br />
+    <button (click)="signMessage($event)">sign_eth</button>
+    <button (click)="signTypedData_v1($event)">sign typed data v1</button>
+    <button (click)="signTypedData_v3($event)">sign typed data v3</button>
+    <button (click)="signTypedData_v4($event)">sign typed data v4</button>
+    <button (click)="changeProvider($event)">Change Provider</button>
+    <button (click)="sendDai($event)">Send DAI</button>
+    <div class="mt-20">
+      <select
+        name="verifier"
+        [(ngModel)]="selectedVerifier"
+        (change)="onSelectedVerifierChanged($event)"
+      >
+        <option
+          *ngFor="let verifier of selectedVerifiers"
+          [value]="verifier.value"
+          >{{ verifier.label }}</option
+        >
+      </select>
+      <input
+        type="email"
+        [(ngModel)]="selectedVerifierId"
+        class="mt-20"
+        placeholder="{{ placeholder }}"
+      />
+    </div>
+    <button
+      [disabled]="!selectedVerifierId"
+      class="mt-20"
+      (click)="getPublicAddress($event)"
+    >
+      Get Public Address
+    </button>
+  </div> -->
+
+  <div *ngIf="address" class="container mt-5">
+    <div class="row">
+      <div class="col-6">
+        <div class="card">
+          <!-- <img
+            class="card-img-top"
+            alt="address"
+            src="https://image.shutterstock.com/image-photo/beautiful-water-drop-on-dandelion-260nw-789676552.jpg"
+          /> -->
+          <ngx-qrcode
+            class="card-img-top qrclass"
+            [qrc-value]="qr_value"
+            qrc-class="qrclass"
+            qrc-errorCorrectionLevel="L"
+            qrc-version="12"
+          >
+          </ngx-qrcode>
+
+          <div class="card-body">
+            <div class="card-title">Account</div>
+            <p class="card-text">
+              {{ address }}
+            </p>
+            <div class="card-title">Balance</div>
+            <p class="card-text">{{ balance }} ETH</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="card">
+          <img
+            class="card-img-top"
+            alt="address"
+            src="https://image.shutterstock.com/image-photo/beautiful-water-drop-on-dandelion-260nw-789676552.jpg"
+          />
+
+          <div class="card-body">
+            <div class="card-title">Address</div>
+            <p class="card-text">
+              0x912ec803b2ce49e4a541068d495ab570912ec803b2ce49e4a541068d495ab570
+            </p>
+            <button class="btn btn-primary" (click)="createPaymentTx()">
+              click
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-3">
+      <div class="col-2">
+        <button class="btn btn-primary" (click)="testPersonalSign()">
+          Personal Sign
+        </button>
+      </div>
+      <div class="col-2">
+        <button class="btn btn-primary" (click)="testEthSign()">
+          Eth Sign
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row card mt-3 mb-3">
+      <div id="console" class="pd-3">
+        <p></p>
+      </div>
+    </div>
+  </div>
+</div>
