@@ -11,7 +11,7 @@ router.post('/getPayments', async(req,res)=>{
     let email = req.body.email
     try{
 
-        let payments = await paymentsModel.find({email: email}).lean().exec()
+        let payments = await paymentsModel.findOne({email: email}).lean().exec()
         res.send({
             error: 'nil',
             status: 'success',
@@ -37,12 +37,15 @@ router.post('/add', async(req,res)=>{
             email: receiverEmail
         }, {
             email: receiverEmail,
-            payments: [{
-                signature: signature,
-                message: message,
-                amount: amount,
-                senderAddress, senderAddress
-            }]
+            $push:{
+                payments: [{
+                    signature: signature,
+                    message: message,
+                    amount: amount,
+                    senderAddress, senderAddress
+                }]
+            }
+            
         }, {upsert: true}).exec()
 
         res.send({   
