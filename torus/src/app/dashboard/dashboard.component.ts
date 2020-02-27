@@ -2,6 +2,13 @@ import { Component } from "@angular/core";
 import web3Obj from "../helper";
 import { Router } from '@angular/router';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import * as IpfsClient from 'ipfs-http-client'
+import * as OrbitDB from 'orbit-db'
+const ipfs = IpfsClient('localhost', '5001');
+
+let orbitdb, db
+/// <reference types="chrome"/>
+//import {chrome} from '@types/chrome';
 const tokenAbi = require("human-standard-token-abi");
 
 @Component({
@@ -27,10 +34,9 @@ export class DashboardComponent {
   constructor(public router: Router, private ngxService: NgxUiLoaderService) {
     console.log("dashboard page loaded");
     this.ngxService.start();
-
     //this.setStateInfo();
   }
-
+  
   selectedVerifiers = [
     { label: "Google", value: "google" },
     { label: "Reddit", value: "reddit" },
@@ -41,7 +47,19 @@ export class DashboardComponent {
     const isTorus = sessionStorage.getItem("pageUsingTorus");
     this.initialize();
   }
+
+  async testDB(){
+    orbitdb = await OrbitDB.createInstance(ipfs)
+    db = await orbitdb.log('hello')
+    let docstore = await orbitdb.docstore('testDb')
+    docstore.put({ _id: 'hello world', doc: 'all the things' })
+    .then(() => docstore.get('hello')).then((value)=>{
+      console.log(value)
+    })
+  }
+
   async initialize(){
+
     let confirm = sessionStorage.getItem('setEnv');
     console.log(confirm);
     //this.setStateInfo();
@@ -119,30 +137,37 @@ export class DashboardComponent {
     this.address = "";
     this.balance = "0";
     sessionStorage.setItem("pageUsingTorus", "false");
-    
+    chrome.storage.local.set({"pageUsingTorus":"false"})
     this.router.navigate(['']);
   }
 
   signMessage() {
     // hex message
-    const message =
-      "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
     // @ts-ignore
-    web3Obj.torus.web3.currentProvider.send(
-      {
-        method: "eth_sign",
-        params: [this.address, message],
-        from: this.address
-      },
-      (err: any, result: any) => {
-        if (err) {
-          return console.error(err);
+    chrome.storage.local.get('targetEmail',(result)=>{
+      let address = result.targetEmail;
+      console.log('targetEmail',address);
+      const message = web3Obj.torus.web3.utils.keccak256(address+15+10);
+      // @ts-ignore
+      web3Obj.torus.web3.currentProvider.send( 
+        {
+          method: "eth_sign",
+          params: [this.address, message],
+          from: this.address
+        },
+        (err: any, result: any) => {
+          if (err) {
+            return console.error(err);
+          }
+          this.console = `sign message => true \n ${result}`;
+          console.log(result);
+          this.printToConsole();
         }
-        this.console = `sign message => true \n ${result}`;
-        console.log(result);
-        this.printToConsole();
-      }
-    );
+      );
+    })
+
+    // @ts-ignore
+
   }
 
   signTypedData_v1 = () => {
