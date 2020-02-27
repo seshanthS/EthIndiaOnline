@@ -12,7 +12,7 @@ router.post('/getPayments', async(req,res)=>{
     try{
 
         let payments = await paymentsModel.findOne({email: email}).lean().exec()
-        res.send({
+        res.status(200).send({
             error: 'nil',
             status: 'success',
             data: payments
@@ -20,7 +20,7 @@ router.post('/getPayments', async(req,res)=>{
 
     }catch(err){
         console.log(err)
-        res.send({
+        res.status(500).send({
             error: err.message,
             status: 'fail',
             data: ""
@@ -48,13 +48,13 @@ router.post('/add', async(req,res)=>{
             
         }, {upsert: true}).exec()
 
-        res.send({   
+        res.status(200).send({   
             error: 'nil',
             status: 'success',
             data: ''
         })
     }catch(err){
-        res.send({   
+        res.status(500).send({   
             error: err.message,
             status: 'success',
             data: ''
