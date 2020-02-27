@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
 import web3Obj from "../helper";
-import { Router } from '@angular/router';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Router } from "@angular/router";
+import { NgxUiLoaderService } from "ngx-ui-loader";
 const tokenAbi = require("human-standard-token-abi");
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "dash-component",
@@ -11,6 +12,7 @@ const tokenAbi = require("human-standard-token-abi");
 })
 export class DashboardComponent {
   address: string = "";
+  tip_amounts: any = "";
   balance: string = "";
   buildEnvironment: "production" | "staging" | "testing" | "development" =
     "production";
@@ -18,18 +20,24 @@ export class DashboardComponent {
   selectedVerifier: "google" | "reddit" | "discord" = "google";
   placeholder: string = "Enter google email";
   selectedVerifierId: string;
-  qr_value:any;
+  qr_value: any;
   sha3Value: string;
   ngOnInit() {
     //this.setBuildEnvironment();
   }
 
-  constructor(public router: Router, private ngxService: NgxUiLoaderService) {
+  constructor(
+    public router: Router,
+    private ngxService: NgxUiLoaderService,
+    private toastr: ToastrService
+  ) {
     console.log("dashboard page loaded");
     this.ngxService.start();
 
     //this.setStateInfo();
   }
+
+  
 
   selectedVerifiers = [
     { label: "Google", value: "google" },
@@ -41,58 +49,58 @@ export class DashboardComponent {
     const isTorus = sessionStorage.getItem("pageUsingTorus");
     this.initialize();
   }
-  async initialize(){
-    let confirm = sessionStorage.getItem('setEnv');
+  async initialize() {
+    let confirm = sessionStorage.getItem("setEnv");
     console.log(confirm);
-    //this.setStateInfo();
-    if(confirm != 'true'){
-    try {
-          await web3Obj.initialize('production')
-          this.setStateInfo()
-        } catch (error) {
-          this.ngxService.stop();
-          console.error(error)
-         }
-        }else{
-          this.setStateInfo()
-        }
-    sessionStorage.setItem('setEnv', 'false');
+    this.setStateInfo();
+    // if(confirm != 'true'){
+    // try {
+    //       await web3Obj.initialize('production')
+    //       this.setStateInfo()
+    //     } catch (error) {
+    //       this.ngxService.stop();
+    //       console.error(error)
+    //      }
+    //     }else{
+    //       this.setStateInfo()
+    //     }
+    sessionStorage.setItem("setEnv", "false");
   }
 
   async setStateInfo() {
-    this.address = (await web3Obj.web3.eth.getAccounts())[0];
-    this.balance = web3Obj.web3.utils.fromWei(
-      await web3Obj.web3.eth.getBalance(this.address),
-      "ether"
-    );
-    // this.address = '0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe';
-    // this.balance = '20';
+    // this.address = (await web3Obj.web3.eth.getAccounts())[0];
+    // this.balance = web3Obj.web3.utils.fromWei(
+    //   await web3Obj.web3.eth.getBalance(this.address),
+    //   "ether"
+    // );
+    this.address = "0x11f4d0A3c12e86B4b5F39B213F7E19D048276DAe";
+    this.balance = "20";
     this.ngxService.stop();
     //await web3Obj.torus.cleanUp();
     console.log("address is", this.address, "balance is", this.balance);
     this.qr_value = this.address;
-
   }
 
-  testSign(){
-
+  testSign() {
     this.sha3Value = web3Obj.web3.utils.soliditySha3("Rajesh kumar");
     console.log("web3.utils.soliditySha3", this.sha3Value);
   }
 
-  testPersonalSign(){
-    web3Obj.web3.eth.personal.sign('TestInput', this.address, "testpassword").then((res)=>{
-      console.log("web3.eth.personal.sign",res);
-      this.console = "Web3.eth.personal.sign() "+res;
-      this.printToConsole();
-    });
+  testPersonalSign() {
+    web3Obj.web3.eth.personal
+      .sign("TestInput", this.address, "testpassword")
+      .then(res => {
+        console.log("web3.eth.personal.sign", res);
+        this.console = "Web3.eth.personal.sign() " + res;
+        this.printToConsole();
+        this.showToastInfo('info', res);
+      });
   }
 
-  testEthSign(){
-    
-    web3Obj.web3.eth.sign("test message", this.address).then((res)=>{
-      console.log('web3.eth.sign', res);
-      this.console = "web3.eth.sign() "+res;
+  testEthSign() {
+    web3Obj.web3.eth.sign("test message", this.address).then(res => {
+      console.log("web3.eth.sign", res);
+      this.console = "web3.eth.sign() " + res;
       this.printToConsole();
     });
   }
@@ -119,8 +127,25 @@ export class DashboardComponent {
     this.address = "";
     this.balance = "0";
     sessionStorage.setItem("pageUsingTorus", "false");
+
+    this.router.navigate([""]);
+  }
+
+  async createPaymentTx(val: any) {
+
+    if(typeof(val)!='number' && val < 0.0001){
+      this.showToastInfo('error', 'Enter valid Amount');
+    }
+    else{
+      console.log(val);
+      // this.console = (
+      //   await web3Obj.torus.initiateTopup("moonpay", {
+      //     selectedCurrency: "USD"
+      //   })
+      // ).toString();
+      // this.printToConsole();
+    }
     
-    this.router.navigate(['']);
   }
 
   signMessage() {
@@ -330,15 +355,6 @@ export class DashboardComponent {
     this.printToConsole();
   }
 
-  async createPaymentTx() {
-    this.console = (
-      await web3Obj.torus.initiateTopup("moonpay", {
-        selectedCurrency: "USD"
-      })
-    ).toString();
-    this.printToConsole();
-  }
-
   async getPublicAddress() {
     this.console = await web3Obj.torus.getPublicAddress({
       verifier: this.selectedVerifier,
@@ -364,4 +380,23 @@ export class DashboardComponent {
     }
     this.selectedVerifier = event.target.value;
   };
+
+  showToastError(title:string, msg:string) {
+    this.toastr.error(msg,title,{
+      timeOut: 3000,
+      closeButton:true,
+      easing:'ease-in',
+      progressBar:true,
+    });
+  }
+
+  showToastInfo(title:string, msg:string){
+    this.toastr.info(msg,title,{
+      timeOut: 3000,
+      closeButton:true,
+      easing:'ease-in',
+      progressBar:true,
+    });
+  }
+
 }

@@ -4,6 +4,8 @@ import { FormsModule } from "@angular/forms";
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 import { NgxUiLoaderModule } from  'ngx-ui-loader';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -11,7 +13,9 @@ import { NgxUiLoaderModule } from  'ngx-ui-loader';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    NgxUiLoaderModule
+    NgxUiLoaderModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -45,8 +45,8 @@ export class HomeComponent {
     const isTorus = sessionStorage.getItem('pageUsingTorus');
     console.log(isTorus, 'istorus');
     this.ngxService.stop();
-    if(isTorus != 'false' && isTorus != null){
-    //if(true){
+    //if(isTorus != 'false' && isTorus != null){
+    if(true){
       //sessionStorage.setItem('setEnv', 'false');
       this.router.navigate(['dashboard']);
     }

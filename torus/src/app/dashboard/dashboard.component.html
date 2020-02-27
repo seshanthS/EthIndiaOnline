@@ -137,11 +137,6 @@
     <div class="row">
       <div class="col-6">
         <div class="card">
-          <!-- <img
-            class="card-img-top"
-            alt="address"
-            src="https://image.shutterstock.com/image-photo/beautiful-water-drop-on-dandelion-260nw-789676552.jpg"
-          /> -->
           <ngx-qrcode
             class="card-img-top qrclass"
             [qrc-value]="qr_value"
@@ -165,17 +160,18 @@
       <div class="col-6">
         <div class="card">
           <img
-            class="card-img-top"
+            class="card-img-top tip_img"
             alt="address"
-            src="https://image.shutterstock.com/image-photo/beautiful-water-drop-on-dandelion-260nw-789676552.jpg"
+            src="../../assets/images/virtual-currency-laundering.png"
           />
 
           <div class="card-body">
-            <div class="card-title">Address</div>
-            <p class="card-text">
-              0x912ec803b2ce49e4a541068d495ab570912ec803b2ce49e4a541068d495ab570
-            </p>
-            <button class="btn btn-primary" (click)="createPaymentTx()">
+            
+            <div class="card-title">Donate here</div>
+
+            <input type="number" #tip_amount="ngModel" [(ngModel)]="tip_amounts" class="form-control" placeholder="Enter amount" name="tip_amount">
+            
+            <button class="btn btn-primary mt-2" (click)="createPaymentTx(tip_amounts)">
               click
             </button>
           </div>
@@ -184,24 +180,25 @@
     </div>
 
     <div class="row p-3">
-      <div class="col-2">
+      <div class="col-3">
         <button class="btn btn-primary" (click)="testPersonalSign()">
           Personal Sign
         </button>
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <button class="btn btn-primary" (click)="testEthSign()">
           Eth Sign
         </button>
       </div>
+    
     </div>
   </div>
 
-  <div class="container">
+  <!-- <div class="container">
     <div class="row card mt-3 mb-3">
       <div id="console" class="pd-3">
         <p></p>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
