@@ -4,12 +4,12 @@ const request = require('request-promise')
 const paymentsModel = require('../models/payments')
 const configModel = require('../models/configModel')
 
-let bot_access_token
+let bot_accessToken
 getToken()
 async function getToken(){
     bot_access_token = await configModel.find({}).lean().exec()
-    if(accessToken != null)
-    bot_access_token = JSON.parse(bot_access_token).accessToken
+    if(bot_accessToken != null)
+    bot_accessToken = JSON.parse(bot_access_token).accessToken
 }
 /* GET home page. */
 router.get('/', async function(req, res, next) {
