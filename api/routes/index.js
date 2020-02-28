@@ -1,11 +1,38 @@
 var express = require('express');
 var router = express.Router();
+const request = require('request-promise')
 const paymentsModel = require('../models/payments')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+
+router.post('/getAccessToken', async(req,res)=>{
+    console.log("query",req.query)
+    console.log("url", req.originalUrl)
+})
+
+router.get('/test', async(req,res)=>{
+
+    let access_token = "Njc5NTM1Mjk5NzEzNTY0Njcy.Xllz4A.swHYfv_fLY1X51-qPuhlQG_28rU"
+    let guild = await request.get("https://discordapp.com/api/v6/guilds/683047056872439855", {
+        headers:{ 
+            'Authorization': 'Bot ' + access_token,
+            "User-Agent": `DiscordBot (http://localhost:3000,6)`
+        }
+    })
+    guild = JSON.parse(guild)
+    let guildOwnerId = guild.owner_id
+    let user = await request.get(`https://discordapp.com/api/v6/users/${guildOwnerId}`, {
+        headers:{ 
+            'Authorization': 'Bot ' + access_token,
+            "User-Agent": `DiscordBot (http://localhost:3000,6)`
+        }
+    })
+
+    res.send({user})
+})
 
 router.post('/getPayments', async(req,res)=>{
     let email = req.body.email
