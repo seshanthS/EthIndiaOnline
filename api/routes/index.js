@@ -2,9 +2,15 @@ var express = require('express');
 var router = express.Router();
 const request = require('request-promise')
 const paymentsModel = require('../models/payments')
+const configModel = require('../models/configModel')
 
 let bot_access_token
-
+getToken()
+async function getToken(){
+    bot_access_token = await configModel.find({}).lean().exec()
+    if(accessToken != null)
+    bot_access_token = JSON.parse(bot_access_token).accessToken
+}
 /* GET home page. */
 router.get('/', async function(req, res, next) {
     console.log("query",req.query)
@@ -19,18 +25,29 @@ router.get('/', async function(req, res, next) {
                 client_secret:'L78LJNbRzjuMHcm1n0zRVD7d322t36A8',
                 grant_type:'authorization_code',
                 code: req.query.code,
-                redirect_uri: 'http://ethindiaonline.ddns.net',
+                redirect_uri: 'http://ethindiaonline.ddns.net/',
                 scope: 'identify email connections'
             },
     
         })
         console.log({response})
+        response = JSON.parse(response)
+        bot_access_token = response.access_token
+
+        await configModel.updateOne({},{
+            accessToken: response.access_token,
+            refreshToken: response.refresh_token,
+            expiresIn: new Date().getTime() + response.expires_in
+        },{upsert: true}).exec()
+        
         res.send({Authorized: true});
     }else{
         res.send({message:'received your msg da...'})
     }
   
 });
+
+//todo check refresh token and update
 
 router.post('/getAccessToken', async(req,res)=>{
     console.log("query",req.query)
@@ -40,8 +57,8 @@ router.post('/getAccessToken', async(req,res)=>{
  
 })
 
-router.get('/getEmail', async(req,res)=>{
-    let user = await request.get(`https://discordapp.com/api/v6/users/633849772146556939`, {
+router.get('/getEmailById/:id', async(req,res)=>{
+    let user = await request.get(`https://discordapp.com/api/v6/users/${req.params.id}`, {
         headers:{ 
             'Authorization': 'Bearer ' + bot_access_token,
             "User-Agent": `DiscordBot (http://localhost:3000,6)`
