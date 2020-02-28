@@ -3,14 +3,53 @@ var router = express.Router();
 const request = require('request-promise')
 const paymentsModel = require('../models/payments')
 
+let bot_access_token
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', async function(req, res, next) {
+    console.log("query",req.query)
+    console.log("url", req.originalUrl)
+    if(req.query.code != undefined){
+        let response = await request.post('https://discordapp.com/api/oauth2/token', {
+            headers : {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+            formData:{
+                client_id:'679535299713564672',
+                client_secret:'L78LJNbRzjuMHcm1n0zRVD7d322t36A8',
+                grant_type:'authorization_code',
+                code: req.query.code,
+                redirect_uri: 'http://ethindiaonline.ddns.net',
+                scope: 'identify email connections'
+            },
+    
+        })
+        console.log({response})
+        res.send({Authorized: true});
+    }else{
+        res.send({message:'received your msg da...'})
+    }
+  
 });
 
 router.post('/getAccessToken', async(req,res)=>{
     console.log("query",req.query)
     console.log("url", req.originalUrl)
+
+    
+ 
+})
+
+router.get('/getEmail', async(req,res)=>{
+    let user = await request.get(`https://discordapp.com/api/v6/users/633849772146556939`, {
+        headers:{ 
+            'Authorization': 'Bearer ' + bot_access_token,
+            "User-Agent": `DiscordBot (http://localhost:3000,6)`
+        }
+    })
+
+    console.log({user})
+    res.send({user})
 })
 
 router.get('/test', async(req,res)=>{
