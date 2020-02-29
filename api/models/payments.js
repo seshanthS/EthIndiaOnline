@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-module.exports = mongoose.model('payments', {
+module.exports = new mongoose.model('payments', {
     email: String,
     payments: [{
         signature: String,
