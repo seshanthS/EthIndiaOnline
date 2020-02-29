@@ -1,5 +1,7 @@
 import Web3 from 'web3'
 import Torus from '@toruslabs/torus-embed'
+/// <reference types="chrome"/>
+//import {chrome} from '@types/chrome';
 
 const web3Obj = {
   web3: new Web3(),
@@ -13,6 +15,7 @@ const web3Obj = {
     await web3Obj.torus.login({})
     web3Obj.setWeb3(web3Obj.torus.provider)
     sessionStorage.setItem('pageUsingTorus', env)
+    //chrome.storage.local.set({pageUsingTorus:"production"})
   }
 }
 

@@ -20,10 +20,13 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@toruslabs/torus-embed": "^0.2.12",
+    "@types/chrome": "0.0.97",
     "human-standard-token-abi": "^2.0.0",
+    "ipfs-http-client": "^42.0.0",
     "ngx-qrcode2": "0.0.9",
     "ngx-toastr": "^12.0.0",
     "ngx-ui-loader": "^8.0.0",
+    "orbit-db": "^0.23.1",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "web3": "^1.2.6",
@@ -50,6 +53,6 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.5.3"
+    "typescript": "^3.8.3"
   }
 }

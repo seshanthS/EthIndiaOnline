@@ -17,10 +17,13 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "types": [ "chrome" ] 
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
-  }
+  },
+  
+
 }
