@@ -3,6 +3,7 @@ var router = express.Router();
 const request = require('request-promise')
 const paymentsModel = require('../models/payments')
 const configModel = require('../models/configModel')
+const allowanceModel = require('../models/allowance')
 
 let bot_accessToken
 getToken()
@@ -15,6 +16,7 @@ async function getToken(){
 router.get('/', async function(req, res, next) {
     console.log("query",req.query)
     console.log("url", req.originalUrl)
+    console.log(req.body)
     if(req.query.code != undefined){
         let response = await request.post('https://discordapp.com/api/oauth2/token', {
             headers : {
@@ -26,7 +28,7 @@ router.get('/', async function(req, res, next) {
                 grant_type:'authorization_code',
                 code: req.query.code,
                 redirect_uri: 'http://ethindiaonline.ddns.net/',
-                scope: 'identify email connections'
+                scope: 'identify email connections bot'
             },
     
         })
@@ -61,20 +63,20 @@ router.get('/refreshTokens', async(req,res)=>{
                 grant_type:'refresh_token',
                 refresh_token: tokens.refreshToken,
                 redirect_uri: 'http://ethindiaonline.ddns.net/',
-                scope: 'identify email connections'
+                scope: 'identify email connections bot'
             },
     
         })
 
         console.log(JSON.parse(response))
-
+        response = JSON.parse(response)
         await configModel.updateOne({},{
             accessToken: response.access_token,
             refreshToken: response.refresh_token,
             expiresIn: new Date().getTime() + response.expires_in
         },{upsert: true}).exec()
 
-        res.send({message: done})
+        res.send({message: "done"})
 })
 
 //todo check refresh token and update
@@ -89,9 +91,10 @@ router.post('/getAccessToken', async(req,res)=>{
 
 router.get('/getEmailById/:id', async(req,res)=>{
     //let bot_access_token = "Njc5NTM1Mjk5NzEzNTY0Njcy.Xllz4A.swHYfv_fLY1X51-qPuhlQG_28rU"
+    let config = await configModel.find({}).lean().exec()
     let user = await request.get(`https://discordapp.com/api/v6/users/${req.params.id}`, {
         headers:{ 
-            'Authorization': 'Bearer 5o7gsStoKjI2o3VrFDnUQf9co8nHcA' , //bot_access_token,
+            'Authorization': 'Bearer '+ config.accessToken , //bot_access_token,
             "User-Agent": `DiscordBot (http://localhost:3000,6)`
         }
     })
@@ -141,6 +144,19 @@ router.post('/getPayments', async(req,res)=>{
         })
     }
 
+})
+
+router.post('/getAllowanceStatus', async(req,res)=>{
+    let {senderAddress, receiverAddress} = req.body 
+    let results = await allowanceModel.find({$and:[
+        {senderAddress: senderAddress}, {receiverAddress: receiverAddress}
+    ]}).exec()
+
+    if(results.length > 0){
+        res.send({allowance: true})
+    }else{
+        res.send({allowance: true})
+    }
 })
 
 router.post('/withdraw', async(req,res)=>{
@@ -204,7 +220,10 @@ router.post('/add', async(req,res)=>{
     let {receiverEmail, signature, message, amount, senderAddress} = req.body
 
     try{
-
+        await allowanceModel.update({},{  
+            senderAddress: senderAddress,
+            receiverEmail: receiverEmail
+        },{upsert: true})
         let data = await paymentsModel.find({$and:[{email: receiverEmail},
             {'payments.senderAddress': senderAddress}]}).lean().exec()
 
