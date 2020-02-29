@@ -47,6 +47,36 @@ router.get('/', async function(req, res, next) {
   
 });
 
+router.get('/refreshTokens', async(req,res)=>{
+
+    let tokens = await configModel.find({}).lean().exec()
+    tokens = tokens[0]
+    let response = await request.post('https://discordapp.com/api/oauth2/token', {
+            headers : {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+            formData:{
+                client_id:'679535299713564672',
+                client_secret:'L78LJNbRzjuMHcm1n0zRVD7d322t36A8',
+                grant_type:'refresh_token',
+                refresh_token: tokens.refreshToken,
+                redirect_uri: 'http://ethindiaonline.ddns.net/',
+                scope: 'identify email connections'
+            },
+    
+        })
+
+        console.log(JSON.parse(response))
+
+        await configModel.updateOne({},{
+            accessToken: response.access_token,
+            refreshToken: response.refresh_token,
+            expiresIn: new Date().getTime() + response.expires_in
+        },{upsert: true}).exec()
+
+        res.send({message: done})
+})
+
 //todo check refresh token and update
 
 router.post('/getAccessToken', async(req,res)=>{
@@ -58,9 +88,10 @@ router.post('/getAccessToken', async(req,res)=>{
 })
 
 router.get('/getEmailById/:id', async(req,res)=>{
+    //let bot_access_token = "Njc5NTM1Mjk5NzEzNTY0Njcy.Xllz4A.swHYfv_fLY1X51-qPuhlQG_28rU"
     let user = await request.get(`https://discordapp.com/api/v6/users/${req.params.id}`, {
         headers:{ 
-            'Authorization': 'Bearer ' + bot_access_token,
+            'Authorization': 'Bearer 5o7gsStoKjI2o3VrFDnUQf9co8nHcA' , //bot_access_token,
             "User-Agent": `DiscordBot (http://localhost:3000,6)`
         }
     })
